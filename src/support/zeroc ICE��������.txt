@@ -1,0 +1,31 @@
+Ice-3.4.2.tar.gz
+ThirdParty-Sources-3.4.2.tar.gz
+
+
+Ice-3.4.2/cpp/INSTALL.LINUX
+
+¡¾1¡¿ThirdParty-Sources-3.4.2.tar.gz
+tar zxvf ThirdParty-Sources-3.4.2.tar.gz
+cd ThirdParty-Sources-3.4.2
+tar zxvf mcpp-2.7.2.tar.gz
+cd mcpp-2.7.2
+patch -p0 < ../mcpp/patch.mcpp.2.7.2
+./configure CFLAGS="-fPIC -m64" --enable-mcpplib --disable-shared
+make
+ÐÞ¸ÄIce-3.4.2/cpp/config/Makefile.rule
+207 MCPP_LIBS              = $(if $(MCPP_HOME),$(MCPP_HOME)/$(libsubdir))/libmcpp.a #-L$(MCPP_HOME)/$(libsubdir)) -lmcpp   
+
+¡¾2¡¿
+cd Ice-3.4.2/cpp
+make
+
+
+¡¾3¡¿
+tar zxvf  bzip2-1.0.6.tar.gz 
+cd bzip2-1.0.6 && make
+cp libbz2.a ../../Ice-3.4.2/cpp/lib/. -rfav
+
+
+
+¡¾4¡¿
+´ò°ü

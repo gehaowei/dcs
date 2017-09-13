@@ -1,0 +1,31 @@
+About DCS
+============
+
+project name: DCS(Distributed Cache System) client library
+
+author mail£ºhaowei.ge@net263.com
+
+file list:
+    include/dcs_client.h
+    lib/libdcs_client.a
+    lib/libdcs_client.so
+    etc/dcs_client.conf.example
+
+
+Compilation instructions
+====================================
+curDir=`pwd`
+when compile, you need CFLAGS += -I${curDir}/include
+when link use share lib, you need LDFLAGS += -L${curDir}/lib -ldcs_client
+when link use static lib, you need LDFLAGS += ${curDir}/lib/libdcs_client.a -lpthread -ldl -lrt
+
+
+Others instructions
+====================================
+log file is ${HOME}/etc/`date`.log  .
+
+The third library dependencies had been embody into libdcs_client:
+    ../support/log4cplus-1.0.4-rc7-modify/lib/liblog4cplus.a \
+    ../support/libmemcache-1.4.0.rc2/src/.libs/libmemcache.a \
+    ../support/zookeeper-3.4.5/src/c/.libs/libzookeeper_mt.a \
+    ../support/ICE/lib/libIce.a ../support/ICE/lib/libIceUtil.a ../support/ICE/lib/libbz2.a
