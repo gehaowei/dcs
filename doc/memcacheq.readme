@@ -1,0 +1,79 @@
+【编译打包】
+见svn目录public\dcs\src\support
+-rw-rw-r-- 1 gehw gehw 29300812 03-04 16:24 db-5.0.21.tar.gz
+-rw-rw-r-- 1 gehw gehw   845446 03-04 16:24 libevent-2.0.20-stable.tar.gz
+-rw-rw-r-- 1 gehw gehw   131519 03-04 16:24 memcacheq-0.2.0.tar.gz
+
+cd
+tar zxvf db-5.0.21.tar.gz
+cd build_unix
+../dist/configure --prefix=$HOME
+make
+make install
+
+cd
+tar zxvf libevent-2.0.20-stable.tar.gz
+cd libevent-2.0.20-stable
+./configure --prefix=$HOME
+make
+make install
+
+cd
+tar zxvf memcacheq-0.2.0.tar.gz
+cd memcacheq-0.2.0
+./configure --prefix=$HOME -with-bdb=$HOME -with-libevent=$HOME/lib -enable-threads
+make
+make install
+
+tar zcvf memcacheq.tar.gz bin/memcacheq lib/libdb-5.0.so lib/libevent-2.0.so.5*
+
+
+【缓存队列服务器安装】
+参考《[分布式缓存系统]安装手册.docx》5	缓存服务器
+
+将memcached替换为memcacheq即可，“-l 192.168.188.51 -p 22201”指定ip端口，-m 200指定占用内存 详见memcacheq -h
+可以起多份如：
+mkdir -p ~/data1/memcacheq
+mkdir -p ~/data2/memcacheq
+mkdir -p ~/data3/memcacheq
+[MEM1]
+home=bin
+program=memcacheq -l 192.168.188.51 -p 22201 -c 1024 -m 2000 -B 10240 -A 16384
+command=./memcacheq -l 192.168.188.51 -p 22201 -c 1024 -m 2000 -B 10240 -A 16384 -d -r -H ~/data1/memcacheq -N -R -v -L 1024 > ~/dat
+a1/mq_error.log 2>&1
+
+[MEM2]
+home=bin
+program=memcacheq -l 192.168.188.51 -p 22202 -c 1024 -m 2000 -B 10240 -A 16384
+command=./memcacheq -l 192.168.188.51 -p 22202 -c 1024 -m 2000 -B 10240 -A 16384 -d -r -H ~/data2/memcacheq -N -R -v -L 1024 > ~/dat
+a2/mq_error.log 2>&1
+
+[MEM3]
+home=bin
+program=memcacheq -l 192.168.188.51 -p 22203 -c 1024 -m 2000 -B 10240 -A 16384
+command=./memcacheq -l 192.168.188.51 -p 22203 -c 1024 -m 2000 -B 10240 -A 16384 -d -r -H ~/data3/memcacheq -N -R -v -L 1024 > ~/dat
+a3/mq_error.log 2>&1
+
+
+【中心服务器安装，备份机制需要关闭】
+参考《[分布式缓存系统]安装手册.docx》3	中心服务器
+#cache node number of one machine group 缓存备份个数
+mg_node_number=1 
+
+【共用zookeeper机群说明】
+修改zk_home配置不与原系统冲突即可
+zk_home=/app/dcqs
+
+【共用同一台机群说明】
+需保证端口号不冲突，都可以通过修改配置实现
+中心服务器
+master_ice_port=26301
+缓存服务器
+cache_ice_port=26302
+缓存服务
+monitor.conf节选：-l 192.168.188.51 -p 13101
+zookeeper机群
+zoo.cfg节选：clientPort=21801
+
+
+
